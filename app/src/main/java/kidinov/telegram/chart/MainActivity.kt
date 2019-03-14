@@ -21,7 +21,6 @@ import kotlinx.serialization.list
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
 class MainActivity : Activity() {
     private val uiScope = CoroutineScope(Main)
 
