@@ -27,7 +27,7 @@ class PlacementCalculator(
             chartBottom
         )
 
-    private val calcNavAreaRect: Rect
+    val calcNavAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             chartBottom + MARGIN.px,
@@ -50,6 +50,26 @@ class PlacementCalculator(
             Area.CHART -> doConvert(chartAreaRect, side)
             Area.NAV -> doConvert(calcNavAreaRect, side)
             Area.BUTTONS -> doConvert(calcButtonsAreaRect, side)
+        }
+    }
+
+    fun calculateXPosition(x: Long, minMaxX: Pair<Long, Long>, area: Area): Float {
+        val dif = minMaxX.second - minMaxX.first
+        val xDif = x - minMaxX.first
+        return when (area) {
+            Area.CHART -> (chartAreaRect.left + chartAreaRect.width().toFloat() / dif * xDif)
+            Area.NAV -> (calcNavAreaRect.left + calcNavAreaRect.width().toFloat() / dif * xDif)
+            Area.BUTTONS -> (calcButtonsAreaRect.left + calcNavAreaRect.width().toFloat() / dif * xDif)
+        }
+    }
+
+    fun calculateYPosition(y: Long, minMaxY: Pair<Long, Long>, area: Area): Float {
+        val dif = minMaxY.second - minMaxY.first
+        val yDif = y - minMaxY.first
+        return when (area) {
+            Area.CHART -> (chartAreaRect.bottom - chartAreaRect.height().toFloat() / dif * yDif)
+            Area.NAV -> (calcNavAreaRect.bottom - calcNavAreaRect.height().toFloat() / dif * yDif)
+            Area.BUTTONS -> (calcButtonsAreaRect.bottom - calcNavAreaRect.height().toFloat() / dif * yDif)
         }
     }
 

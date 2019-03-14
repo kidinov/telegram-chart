@@ -1,15 +1,17 @@
-package kidinov.telegram.chart.util
+package kidinov.telegram.chart.renderer
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import kidinov.telegram.chart.model.Chart
+import kidinov.telegram.chart.util.Area
+import kidinov.telegram.chart.util.MARGIN
+import kidinov.telegram.chart.util.PlacementCalculator
+import kidinov.telegram.chart.util.Side
+import kidinov.telegram.chart.util.px
 
-const val BUTTON_SIZE = 32
-const val BUTTON_MARGIN = 12
-
-class Drawer(private val placementCalculator: PlacementCalculator) {
+class ButtonsRenderer(private val placementCalculator: PlacementCalculator) : Renderer {
     private val buttonPaint = Paint().apply {
         flags = Paint.ANTI_ALIAS_FLAG
         style = Paint.Style.FILL
@@ -59,5 +61,8 @@ class Drawer(private val placementCalculator: PlacementCalculator) {
         checkPath.lineTo(cx, cy + MARGIN.px)
         checkPath.lineTo(cx + MARGIN.px, cy - MARGIN.px)
         c.drawPath(checkPath, checkPaint)
+    }
+
+    override fun dataChanged() {
     }
 }

@@ -44,6 +44,7 @@ class MainActivity : Activity() {
             },
             { charts ->
                 generateButtons(charts)
+                glButtons.getChildAt(0).callOnClick()
             }
         )
     }
@@ -77,8 +78,8 @@ class MainActivity : Activity() {
                 res.add(
                     Line(
                         xColumn.zip(
-                            chartData.columns.first { it[0] == type.key }.drop(1).map { it.toInt() }
-                        ).toMap(),
+                            chartData.columns.first { it[0] == type.key }.drop(1).map { it.toLong() }
+                        ).toMap().toSortedMap(),
                         chartData.names.getValue(type.key),
                         Color.parseColor(chartData.colors[type.key])
                     )

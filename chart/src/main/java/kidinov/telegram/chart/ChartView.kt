@@ -5,13 +5,13 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.ViewGroup
 import kidinov.telegram.chart.model.Chart
-import kidinov.telegram.chart.util.Drawer
+import kidinov.telegram.chart.renderer.GeneralRenderer
 import kidinov.telegram.chart.util.PlacementCalculator
 
 class ChartView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
-    private lateinit var drawer: Drawer
+    private lateinit var renderer: GeneralRenderer
 
     private lateinit var data: Chart
 
@@ -22,7 +22,7 @@ class ChartView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        drawer = Drawer(PlacementCalculator(w, h))
+        renderer = GeneralRenderer(PlacementCalculator(w, h))
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -34,11 +34,12 @@ class ChartView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         if (!::data.isInitialized) return
 
-        drawer.drawButtons(canvas, data)
+        renderer.draw(canvas, data)
     }
 
     fun setChartData(data: Chart) {
         this.data = data
+        renderer.dataChanged()
         invalidate()
     }
 }
