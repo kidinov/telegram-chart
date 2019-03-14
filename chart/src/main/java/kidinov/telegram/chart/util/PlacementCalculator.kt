@@ -6,12 +6,20 @@ const val LINES_AREA_HEIGHT = 64
 const val NAVIGATION_AREA_HEIGHT = 64
 const val MARGIN = 8
 
-class PlacementCalculator(
-    private val height: Int,
-    private val width: Int
-) {
 
-    val chartAreaRect: Rect
+enum class Side {
+    LEFT, TOP
+}
+
+enum class Area {
+    CHART, NAV, BUTTONS
+}
+
+class PlacementCalculator(
+    private val width: Int,
+    private val height: Int
+) {
+    private val chartAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             MARGIN.px,
@@ -19,7 +27,7 @@ class PlacementCalculator(
             chartBottom
         )
 
-    val calcNavAreaRect: Rect
+    private val calcNavAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             chartBottom + MARGIN.px,
@@ -27,7 +35,7 @@ class PlacementCalculator(
             navAreaBottom
         )
 
-    val calcLinesAreaRect: Rect
+    private val calcButtonsAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             navAreaBottom + MARGIN.px,
@@ -35,9 +43,19 @@ class PlacementCalculator(
             navAreaBottom + LINES_AREA_HEIGHT.px
         )
 
+    fun convert(value: Float, area: Area, side: Side): Float {
+        fun doConvert(rect: Rect, side: Side) =
+            if (side == Side.LEFT) rect.left + value else rect.top + value
+        return when (area) {
+            Area.CHART -> doConvert(chartAreaRect, side)
+            Area.NAV -> doConvert(calcNavAreaRect, side)
+            Area.BUTTONS -> doConvert(calcButtonsAreaRect, side)
+        }
+    }
+
     private val chartBottom: Int
         get() = height - LINES_AREA_HEIGHT.px - NAVIGATION_AREA_HEIGHT.px - MARGIN.px
 
     private val navAreaBottom: Int
-        get() = chartBottom - NAVIGATION_AREA_HEIGHT.px - MARGIN.px
+        get() = chartBottom + NAVIGATION_AREA_HEIGHT.px + MARGIN.px
 }

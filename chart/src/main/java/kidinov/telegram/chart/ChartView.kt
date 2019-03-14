@@ -22,7 +22,7 @@ class ChartView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        drawer = Drawer(PlacementCalculator(context))
+        drawer = Drawer(PlacementCalculator(w, h))
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -31,12 +31,14 @@ class ChartView @JvmOverloads constructor(
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         if (!::data.isInitialized) return
 
+        drawer.drawButtons(canvas, data)
     }
 
     fun setChartData(data: Chart) {
         this.data = data
+        invalidate()
     }
 }

@@ -9,6 +9,7 @@ import kidinov.telegram.chart.model.Chart
 import kidinov.telegram.chart.model.ChartData
 import kidinov.telegram.chart.model.Line
 import kidinov.telegram.chart.model.Type
+import kotlinx.android.synthetic.main.activity_main.cvChart
 import kotlinx.android.synthetic.main.activity_main.glButtons
 import kotlinx.android.synthetic.main.activity_main.pbProgress
 import kotlinx.coroutines.CoroutineScope
@@ -61,6 +62,7 @@ class MainActivity : Activity() {
             glButtons.addView(
                 Button(this).apply {
                     text = index.toString()
+                    setOnClickListener { cvChart.setChartData(chart) }
                 }
             )
         }
