@@ -5,10 +5,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import kidinov.telegram.chart.model.Chart
 import kidinov.telegram.chart.model.ChartData
 import kidinov.telegram.chart.model.Line
 import kidinov.telegram.chart.model.Type
+import kidinov.telegram.chart.util.px
 import kotlinx.android.synthetic.main.activity_main.cvChart
 import kotlinx.android.synthetic.main.activity_main.glButtons
 import kotlinx.android.synthetic.main.activity_main.pbProgress

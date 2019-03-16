@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import kidinov.telegram.chart.model.Button
-import kidinov.telegram.chart.util.MARGIN
 import kidinov.telegram.chart.util.px
 
 class ButtonsRenderer {
@@ -44,9 +43,9 @@ class ButtonsRenderer {
 
     private fun drawCheck(cx: Float, cy: Float, c: Canvas) {
         checkPath.reset()
-        checkPath.moveTo(cx - MARGIN.px, cy - MARGIN.px)
-        checkPath.lineTo(cx, cy + MARGIN.px)
-        checkPath.lineTo(cx + MARGIN.px, cy - MARGIN.px)
+        checkPath.moveTo(cx, cy)
+        checkPath.lineTo(cx, cy)
+        checkPath.lineTo(cx, cy)
         c.drawPath(checkPath, checkPaint)
     }
 

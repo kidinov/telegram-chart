@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import kidinov.telegram.chart.model.Button
 import kidinov.telegram.chart.model.Chart
+import kidinov.telegram.chart.model.NavigationControl
 import kidinov.telegram.chart.renderer.GeneralRenderer
 import kidinov.telegram.chart.util.ButtonsCalculator
 import kidinov.telegram.chart.util.ChatAnimator
@@ -26,6 +27,7 @@ class ChartView @JvmOverloads constructor(
     private val touchConverter = TouchConverter(this)
 
     var buttons: List<Button> = emptyList()
+    lateinit var navControl: NavigationControl
     private lateinit var data: Chart
 
     init {
@@ -39,6 +41,8 @@ class ChartView @JvmOverloads constructor(
         val placementCalculator = PlacementCalculator(w, h)
         renderer = GeneralRenderer(placementCalculator, chartAnimator)
         buttonsCalculator = ButtonsCalculator(placementCalculator)
+
+        navControl = NavigationControl((w / 2).toFloat(), (w / 3 * 2).toFloat())
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -55,6 +59,7 @@ class ChartView @JvmOverloads constructor(
     fun setChartData(data: Chart) {
         this.buttons = buttonsCalculator.calculateButtons(data)
         this.data = data
+        renderer.navigationChanged(navControl)
         doRedraw()
     }
 
@@ -69,5 +74,10 @@ class ChartView @JvmOverloads constructor(
         data.lines.first { it.name == changedButton.lineName }.toRender = changedButton.checked
 
         doRedraw()
+    }
+
+    fun onNavigationChanged(left: Float, right: Float) {
+        renderer.navigationChanged(navControl.apply { this.left = left; this.right = right })
+        postInvalidate()
     }
 }

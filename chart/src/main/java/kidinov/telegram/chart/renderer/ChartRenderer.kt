@@ -9,9 +9,14 @@ import kidinov.telegram.chart.util.Area
 import kidinov.telegram.chart.util.ChartCalculator
 import kidinov.telegram.chart.util.ChatAnimator
 import kidinov.telegram.chart.util.PlacementCalculator
+import kidinov.telegram.chart.util.adjustAlpha
+import kidinov.telegram.chart.util.linesToRender
 import kidinov.telegram.chart.util.px
+import java.text.SimpleDateFormat
 
-const val LAGEND_LINE_MARGIN = 6
+const val LEGEND_Y_LINE_MARGIN = 6
+const val LEGEND_TEXT_SIZE = 14
+const val LEGEND_ITEMS = 6
 
 class ChartRenderer(
     private val placementCalculator: PlacementCalculator,
@@ -24,14 +29,17 @@ class ChartRenderer(
     private var leftProp: Float = 0f
     private var rightProp: Float = 1f
 
+    private val dateFormatter = SimpleDateFormat("MMM dd")
+
     private val path = Path()
 
     private lateinit var data: Chart
 
-    private val legentPaint = Paint().apply {
+    private val legendPaint = Paint().apply {
         flags = Paint.ANTI_ALIAS_FLAG
         style = Paint.Style.FILL
         color = Color.LTGRAY
+        textSize = LEGEND_TEXT_SIZE.px.toFloat()
     }
 
     private val linePaint = Paint().apply {
@@ -45,31 +53,34 @@ class ChartRenderer(
     fun drawChart(c: Canvas) {
         if (!::data.isInitialized) return
 
+        drawLines(c)
         drawLegend(c)
+    }
 
-//        linesToRender(data).forEach { line ->
-//            line.coordinates.asIterable().forEachIndexed { index, coordinate ->
-//                val x = placementCalculator.calculateXPosition(coordinate.key, minMaxX, Area.NAV)
-//                val y = placementCalculator.calculateYPosition(
-//                    coordinate.value,
-//                    minMaxY,
-//                    Area.NAV
-//                )
-//
-//                val yAnimated = y + (placementCalculator.navAreaRect.bottom - y) * (1 - chartAnimator.multiplierY)
-//                if (index == 0) path.moveTo(x, yAnimated)
-//                else path.lineTo(x, yAnimated)
-//            }
-//            linePaint.apply { color = adjustAlpha(line.color, chartAnimator.alpha) }
-//            c.drawPath(path, linePaint)
-//            path.reset()
-//        }
+    private fun drawLines(c: Canvas) {
+        data.linesToRender().forEach { line ->
+            line.coordinates.asIterable().forEachIndexed { index, coordinate ->
+                val x = placementCalculator.calculateXPosition(coordinate.key, minMaxX, Area.CHART)
+                val y = placementCalculator.calculateYPosition(
+                    coordinate.value,
+                    minMaxY,
+                    Area.CHART
+                )
+
+                val yAnimated = y + (placementCalculator.navAreaRect.bottom - y) * (1 - chartAnimator.multiplierY)
+                if (index == 0) path.moveTo(x, yAnimated)
+                else path.lineTo(x, yAnimated)
+            }
+            linePaint.apply { color = line.color.adjustAlpha(chartAnimator.alpha) }
+            c.drawPath(path, linePaint)
+            path.reset()
+        }
     }
 
     fun dataChanged(data: Chart) {
         this.data = data
-        minMaxX = chartCalculator.calcXMinMax(linesToRender(data).map { it.coordinates })
-        minMaxY = chartCalculator.calcYMinMax(linesToRender(data).map { it.coordinates })
+        minMaxX = chartCalculator.calcXMinMax(data.linesToRender().map { it.coordinates })
+        minMaxY = chartCalculator.calcYMinMax(data.linesToRender().map { it.coordinates })
     }
 
     fun windowChanged(leftProp: Float, rightProp: Float) {
@@ -80,30 +91,60 @@ class ChartRenderer(
     }
 
     private fun drawLegend(c: Canvas) {
-        val diff = minMaxY.second - minMaxY.first
+        drawXLegend(c)
+        drawYLegend(c)
+    }
 
-        for (i in 1..6) {
-            val value = minMaxY.first + diff / i
-            val x = placementCalculator.calculateXPosition(minMaxX.first, minMaxX, Area.CHART)
-            val y = placementCalculator.calculateXPosition(value, minMaxY, Area.CHART)
-            c.drawText(value.toString(), x, y, legentPaint)
+    private fun drawXLegend(c: Canvas) {
+        val diff = (getMaxX() - getMinX()) / LEGEND_ITEMS
+
+        var value = getMaxX()
+        for (i in 1..LEGEND_ITEMS) {
+            value -= diff
+            val x = placementCalculator.calculateXPosition(
+                value,
+                getMinX() to getMaxX(),
+                Area.CHART_X_LEGEND
+            )
+            val y = placementCalculator.calculateYPosition(
+                getMinX(),
+                getMinX() to getMaxX(),
+                Area.CHART_X_LEGEND
+            )
+            c.drawText(dateFormatter.format(value), x, y, legendPaint)
+        }
+    }
+
+    private fun drawYLegend(c: Canvas) {
+        val diff = (getMaxY() - getMinY()) / LEGEND_ITEMS
+
+        var value = getMaxY()
+        for (i in 1..LEGEND_ITEMS) {
+            value -= diff
+            val x = placementCalculator.calculateXPosition(
+                getMinX(),
+                getMinX() to getMaxX(),
+                Area.CHART_Y_LEGEND
+            )
+            val y = placementCalculator.calculateYPosition(
+                value,
+                getMinY() to getMaxY(),
+                Area.CHART_Y_LEGEND
+            )
+            c.drawText(value.toString(), x, y, legendPaint)
             c.drawLine(
                 x,
-                y + LAGEND_LINE_MARGIN.px.toLong(),
+                y + LEGEND_Y_LINE_MARGIN.px.toLong(),
                 x + placementCalculator.chartAreaRect.width(),
-                y + LAGEND_LINE_MARGIN.px.toLong(),
-                legentPaint
+                y + LEGEND_Y_LINE_MARGIN.px.toLong(),
+                legendPaint
             )
         }
     }
 
-    private fun adjustAlpha(color: Int, factor: Float): Int {
-        val alpha = Math.round(Color.alpha(color) * factor)
-        val red = Color.red(color)
-        val green = Color.green(color)
-        val blue = Color.blue(color)
-        return Color.argb(alpha, red, green, blue)
-    }
+    private fun getMinX() = minMaxX.first
+    private fun getMaxX() = minMaxX.second
 
-    private fun linesToRender(data: Chart) = data.lines.filter { it.toRender }
+    private fun getMinY() = minMaxY.first
+    private fun getMaxY() = minMaxY.second
 }

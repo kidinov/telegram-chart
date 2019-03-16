@@ -9,16 +9,21 @@ class TouchConverter(
 ) : View.OnTouchListener {
 
     override fun onTouch(v: View, event: MotionEvent): Boolean {
-        if (event.action != MotionEvent.ACTION_UP) return true
-
-        view.buttons.forEach {
-            if (event.x in (it.cx - it.rad)..(it.cx + it.rad) &&
-                event.y in (it.cy - it.rad)..(it.cy + it.rad)
-            ) {
-                view.onButtonClicked(it)
-                return@forEach
+        if (event.action == MotionEvent.ACTION_UP) {
+            view.buttons.forEach {
+                if (event.x in (it.cx - it.rad)..(it.cx + it.rad) &&
+                    event.y in (it.cy - it.rad)..(it.cy + it.rad)
+                ) {
+                    view.onButtonClicked(it)
+                    return@forEach
+                }
             }
         }
+
+        if (event.action == MotionEvent.ACTION_MOVE) {
+            view.onNavigationChanged(event.x, event.x + 200)
+        }
+
         return true
     }
 
