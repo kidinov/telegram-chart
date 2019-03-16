@@ -19,7 +19,7 @@ class PlacementCalculator(
     private val width: Int,
     private val height: Int
 ) {
-    private val chartAreaRect: Rect
+    val chartAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             MARGIN.px,
@@ -27,7 +27,7 @@ class PlacementCalculator(
             chartBottom
         )
 
-    val calcNavAreaRect: Rect
+    val navAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             chartBottom + MARGIN.px,
@@ -35,7 +35,7 @@ class PlacementCalculator(
             navAreaBottom
         )
 
-    private val calcButtonsAreaRect: Rect
+    private val buttonsAreaRect: Rect
         get() = Rect(
             MARGIN.px,
             navAreaBottom + MARGIN.px,
@@ -48,8 +48,8 @@ class PlacementCalculator(
             if (side == Side.LEFT) rect.left + value else rect.top + value
         return when (area) {
             Area.CHART -> doConvert(chartAreaRect, side)
-            Area.NAV -> doConvert(calcNavAreaRect, side)
-            Area.BUTTONS -> doConvert(calcButtonsAreaRect, side)
+            Area.NAV -> doConvert(navAreaRect, side)
+            Area.BUTTONS -> doConvert(buttonsAreaRect, side)
         }
     }
 
@@ -58,8 +58,8 @@ class PlacementCalculator(
         val xDif = x - minMaxX.first
         return when (area) {
             Area.CHART -> (chartAreaRect.left + chartAreaRect.width().toFloat() / dif * xDif)
-            Area.NAV -> (calcNavAreaRect.left + calcNavAreaRect.width().toFloat() / dif * xDif)
-            Area.BUTTONS -> (calcButtonsAreaRect.left + calcNavAreaRect.width().toFloat() / dif * xDif)
+            Area.NAV -> (navAreaRect.left + navAreaRect.width().toFloat() / dif * xDif)
+            Area.BUTTONS -> (buttonsAreaRect.left + navAreaRect.width().toFloat() / dif * xDif)
         }
     }
 
@@ -68,8 +68,8 @@ class PlacementCalculator(
         val yDif = y - minMaxY.first
         return when (area) {
             Area.CHART -> (chartAreaRect.bottom - chartAreaRect.height().toFloat() / dif * yDif)
-            Area.NAV -> (calcNavAreaRect.bottom - calcNavAreaRect.height().toFloat() / dif * yDif)
-            Area.BUTTONS -> (calcButtonsAreaRect.bottom - calcNavAreaRect.height().toFloat() / dif * yDif)
+            Area.NAV -> (navAreaRect.bottom - navAreaRect.height().toFloat() / dif * yDif)
+            Area.BUTTONS -> (buttonsAreaRect.bottom - navAreaRect.height().toFloat() / dif * yDif)
         }
     }
 

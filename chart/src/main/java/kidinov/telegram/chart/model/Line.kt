@@ -5,5 +5,6 @@ import java.util.SortedMap
 data class Line(
     val coordinates: SortedMap<Long, Long>,
     val name: String,
-    val color: Int
+    val color: Int,
+    var toRender: Boolean = true
 )

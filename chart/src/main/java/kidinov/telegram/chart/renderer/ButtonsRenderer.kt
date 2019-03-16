@@ -4,14 +4,11 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import kidinov.telegram.chart.model.Chart
-import kidinov.telegram.chart.util.Area
+import kidinov.telegram.chart.model.Button
 import kidinov.telegram.chart.util.MARGIN
-import kidinov.telegram.chart.util.PlacementCalculator
-import kidinov.telegram.chart.util.Side
 import kidinov.telegram.chart.util.px
 
-class ButtonsRenderer(private val placementCalculator: PlacementCalculator) : Renderer {
+class ButtonsRenderer {
     private val buttonPaint = Paint().apply {
         flags = Paint.ANTI_ALIAS_FLAG
         style = Paint.Style.FILL
@@ -28,31 +25,21 @@ class ButtonsRenderer(private val placementCalculator: PlacementCalculator) : Re
 
     private var checkPath = Path()
 
-    fun drawButtons(c: Canvas, data: Chart) {
-        data.lines.forEachIndexed { index, line ->
-            drawButton(c, line.color, index)
-        }
+    private var buttons: List<Button> = emptyList()
+
+    fun drawButtons(c: Canvas) {
+        buttons.forEach { button -> drawButton(c, button) }
     }
 
-    private fun drawButton(c: Canvas, color: Int, index: Int) {
-        val cx = placementCalculator.convert(
-            (index * (BUTTON_SIZE.px + BUTTON_MARGIN.px) + BUTTON_MARGIN.px).toFloat(),
-            Area.BUTTONS,
-            Side.LEFT
-        )
-        val cy = placementCalculator.convert(
-            (BUTTON_SIZE.px / 2).toFloat(),
-            Area.BUTTONS,
-            Side.TOP
-        )
+    private fun drawButton(c: Canvas, button: Button) {
         c.drawCircle(
-            cx,
-            cy,
-            BUTTON_SIZE.px.toFloat() / 2,
-            buttonPaint.apply { this.color = color }
+            button.cx,
+            button.cy,
+            button.rad.toFloat(),
+            buttonPaint.apply { this.color = button.color }
         )
 
-        drawCheck(cx, cy, c)
+        if (button.checked) drawCheck(button.cx, button.cy, c)
     }
 
     private fun drawCheck(cx: Float, cy: Float, c: Canvas) {
@@ -63,6 +50,7 @@ class ButtonsRenderer(private val placementCalculator: PlacementCalculator) : Re
         c.drawPath(checkPath, checkPaint)
     }
 
-    override fun dataChanged() {
+    fun dataChanged(buttons: List<Button>) {
+        this.buttons = buttons
     }
 }

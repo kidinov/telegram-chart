@@ -2,6 +2,8 @@ package kidinov.telegram.chart.util
 
 class ChartCalculator {
     fun calcXMinMax(coordinates: List<Map<Long, Long>>): Pair<Long, Long> {
+        if (coordinates.isEmpty()) return 0L to 0L
+
         var min = coordinates.first().keys.first()
         var max = coordinates.first().keys.first()
         coordinates.forEach {
@@ -14,6 +16,8 @@ class ChartCalculator {
     }
 
     fun calcYMinMax(coordinates: List<Map<Long, Long>>): Pair<Long, Long> {
+        if (coordinates.isEmpty()) return 0L to 0L
+
         var min = coordinates.first().values.first()
         var max = coordinates.first().values.first()
         coordinates.forEach {
