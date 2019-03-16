@@ -12,7 +12,7 @@ import kidinov.telegram.chart.renderer.GeneralRenderer
 import kidinov.telegram.chart.util.ButtonsCalculator
 import kidinov.telegram.chart.util.ChatAnimator
 import kidinov.telegram.chart.util.PlacementCalculator
-import kidinov.telegram.chart.util.TouchConverter
+import kidinov.telegram.chart.util.TouchHandler
 
 class ChartView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -24,7 +24,7 @@ class ChartView @JvmOverloads constructor(
             postInvalidate()
         }
     )
-    private val touchConverter = TouchConverter(this)
+    private val touchConverter = TouchHandler(this)
 
     var buttons: List<Button> = emptyList()
     lateinit var navControl: NavigationControl
@@ -42,7 +42,13 @@ class ChartView @JvmOverloads constructor(
         renderer = GeneralRenderer(placementCalculator, chartAnimator)
         buttonsCalculator = ButtonsCalculator(placementCalculator)
 
-        navControl = NavigationControl((w / 2).toFloat(), (w / 3 * 2).toFloat())
+        navControl = NavigationControl(
+            (w / 2).toFloat(),
+            (w / 3 * 2).toFloat(),
+            placementCalculator.navAreaRect.top.toFloat(),
+            placementCalculator.navAreaRect.bottom.toFloat(),
+            placementCalculator.navAreaRect.width().toFloat()
+        )
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {

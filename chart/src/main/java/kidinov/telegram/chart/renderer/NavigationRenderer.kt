@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import kidinov.telegram.chart.model.Chart
+import kidinov.telegram.chart.model.NavigationControl
 import kidinov.telegram.chart.util.Area
 import kidinov.telegram.chart.util.ChartCalculator
 import kidinov.telegram.chart.util.ChatAnimator
@@ -110,9 +111,9 @@ class NavigationRenderer(
         c.drawLine(left, navAreaRect.bottom.toFloat(), right, navAreaRect.bottom.toFloat(), navLinesPaint)
     }
 
-    fun windowChanged(left: Float, right: Float) {
-        this.left = left
-        this.right = right
+    fun windowChanged(navControl: NavigationControl) {
+        this.left = navControl.left
+        this.right = navControl.right
     }
 
     fun dataChanged(data: Chart) {

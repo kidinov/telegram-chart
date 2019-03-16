@@ -1,5 +1,8 @@
 package kidinov.telegram.chart.util
 
+import kidinov.telegram.chart.model.Line
+import kidinov.telegram.chart.model.NavigationControl
+
 class ChartCalculator {
     fun calcXMinMax(coordinates: List<Map<Long, Long>>): Pair<Long, Long> {
         if (coordinates.isEmpty()) return 0L to 0L
@@ -27,6 +30,11 @@ class ChartCalculator {
             }
         }
         return min to max
+    }
+
+    fun setRangeToShow(line: Line, navControl: NavigationControl) {
+        val leftProp = navControl.left / navControl.width
+        val rightProp = navControl.right / navControl.width
     }
 
 }

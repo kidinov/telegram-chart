@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import kidinov.telegram.chart.model.Chart
+import kidinov.telegram.chart.model.NavigationControl
 import kidinov.telegram.chart.util.Area
 import kidinov.telegram.chart.util.ChartCalculator
 import kidinov.telegram.chart.util.ChatAnimator
@@ -25,9 +26,6 @@ class ChartRenderer(
 ) {
     private lateinit var minMaxX: Pair<Long, Long>
     private lateinit var minMaxY: Pair<Long, Long>
-
-    private var leftProp: Float = 0f
-    private var rightProp: Float = 1f
 
     private val dateFormatter = SimpleDateFormat("MMM dd")
 
@@ -83,11 +81,10 @@ class ChartRenderer(
         minMaxY = chartCalculator.calcYMinMax(data.linesToRender().map { it.coordinates })
     }
 
-    fun windowChanged(leftProp: Float, rightProp: Float) {
+    fun windowChanged(navControl: NavigationControl) {
         if (!::data.isInitialized) return
 
-        this.leftProp = leftProp
-        this.rightProp = rightProp
+        data.lines.forEach { chartCalculator.setRangeToShow(it, navControl) }
     }
 
     private fun drawLegend(c: Canvas) {

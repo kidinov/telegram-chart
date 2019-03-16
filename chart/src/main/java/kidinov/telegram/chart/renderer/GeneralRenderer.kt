@@ -32,7 +32,7 @@ class GeneralRenderer(
     }
 
     fun navigationChanged(navControl: NavigationControl) {
-        println("navControl - $navControl")
-        navigationRenderer.windowChanged(navControl.left, navControl.right)
+        navigationRenderer.windowChanged(navControl)
+        chartRenderer.windowChanged(navControl)
     }
 }

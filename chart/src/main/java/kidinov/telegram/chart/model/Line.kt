@@ -6,5 +6,6 @@ data class Line(
     val coordinates: SortedMap<Long, Long>,
     val name: String,
     val color: Int,
-    var toRender: Boolean = true
+    var toRender: Boolean = true,
+    var range: IntRange = IntRange(0, coordinates.size)
 )
