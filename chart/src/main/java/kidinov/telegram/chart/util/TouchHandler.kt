@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import kidinov.telegram.chart.ChartView
 
-const val NAB_BORDER_THRESHOLD = 4
+const val NAB_BORDER_THRESHOLD = 6
 
 class TouchHandler(
     private val view: ChartView
@@ -31,7 +31,7 @@ class TouchHandler(
 
         with(view.navControl) {
             if (event.action == MotionEvent.ACTION_DOWN) {
-                if (event.y !in top..bottom) return@with
+                if (event.y !in viewTop..viewBottom) return@with
 
                 when {
                     event.x in (left - NAB_BORDER_THRESHOLD.px)..(left + NAB_BORDER_THRESHOLD.px) ->
@@ -44,26 +44,20 @@ class TouchHandler(
             }
 
             if (event.action == MotionEvent.ACTION_MOVE && navDrag != NavDrag.NONE) {
-                println("navDrag $navDrag left - $left right - $right")
                 when (navDrag) {
                     NavDrag.LEFT ->
-                        if (event.x <= right - NAB_BORDER_THRESHOLD.px)
+                        if (event.x <= right - NAB_BORDER_THRESHOLD.px && event.x > viewLeft)
                             view.onNavigationChanged(event.x, right)
-                        else navDrag = NavDrag.NONE
                     NavDrag.RIGHT ->
-                        if (event.x >= left + NAB_BORDER_THRESHOLD.px)
+                        if (event.x >= left + NAB_BORDER_THRESHOLD.px && event.x < viewRight)
                             view.onNavigationChanged(left, event.x)
-                        else navDrag = NavDrag.NONE
                     NavDrag.BOTH -> {
                         if (prevX > 0) {
                             val dif = event.x - prevX
-                            println("dif $dif prevX - $prevX")
-                            if ((left > NAB_BORDER_THRESHOLD.px || dif > 0) &&
-                                (right < width - NAB_BORDER_THRESHOLD.px || dif < 0)
+                            if ((left > viewLeft || dif > 0) &&
+                                (right < viewRight || dif < 0)
                             ) {
                                 view.onNavigationChanged(left + dif, right + dif)
-                            } else {
-                                navDrag = NavDrag.NONE
                             }
                         }
 

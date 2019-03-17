@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat
 const val LEGEND_Y_LINE_MARGIN = 6
 const val LEGEND_TEXT_SIZE = 14
 const val LEGEND_ITEMS = 6
+val LEGEND_COLOR = Color.argb(255, 200, 200, 200)
 
 class ChartRenderer(
     private val placementCalculator: PlacementCalculator,
@@ -36,14 +37,14 @@ class ChartRenderer(
     private val legendPaint = Paint().apply {
         flags = Paint.ANTI_ALIAS_FLAG
         style = Paint.Style.FILL
-        color = Color.LTGRAY
+        color = LEGEND_COLOR
         textSize = LEGEND_TEXT_SIZE.px.toFloat()
     }
 
     private val linePaint = Paint().apply {
         flags = Paint.ANTI_ALIAS_FLAG
         style = Paint.Style.STROKE
-        strokeWidth = (1.px * 1.5).toFloat()
+        strokeWidth = 2.px.toFloat()
         strokeCap = Paint.Cap.ROUND
         strokeJoin = Paint.Join.ROUND
     }
@@ -51,13 +52,13 @@ class ChartRenderer(
     fun drawChart(c: Canvas) {
         if (!::data.isInitialized) return
 
-        drawLines(c)
         drawLegend(c)
+        drawLines(c)
     }
 
     private fun drawLines(c: Canvas) {
         data.linesToRender().forEach { line ->
-            line.coordinates.asIterable().forEachIndexed { index, coordinate ->
+            line.coordinatesArea.asIterable().forEachIndexed { index, coordinate ->
                 val x = placementCalculator.calculateXPosition(coordinate.key, minMaxX, Area.CHART)
                 val y = placementCalculator.calculateYPosition(
                     coordinate.value,
@@ -65,7 +66,8 @@ class ChartRenderer(
                     Area.CHART
                 )
 
-                val yAnimated = y + (placementCalculator.navAreaRect.bottom - y) * (1 - chartAnimator.multiplierY)
+                val yAnimated =
+                    y + (placementCalculator.chartAreaRect.bottom - y) * (1 - chartAnimator.multiplierY)
                 if (index == 0) path.moveTo(x, yAnimated)
                 else path.lineTo(x, yAnimated)
             }
@@ -77,14 +79,16 @@ class ChartRenderer(
 
     fun dataChanged(data: Chart) {
         this.data = data
-        minMaxX = chartCalculator.calcXMinMax(data.linesToRender().map { it.coordinates })
-        minMaxY = chartCalculator.calcYMinMax(data.linesToRender().map { it.coordinates })
+        minMaxX = chartCalculator.calcXMinMax(data.linesToRender().map { it.coordinatesArea })
+        minMaxY = chartCalculator.calcYMinMax(data.linesToRender().map { it.coordinatesArea })
     }
 
     fun windowChanged(navControl: NavigationControl) {
         if (!::data.isInitialized) return
 
         data.lines.forEach { chartCalculator.setRangeToShow(it, navControl) }
+        minMaxX = chartCalculator.calcXMinMax(data.linesToRender().map { it.coordinatesArea })
+        minMaxY = chartCalculator.calcYMinMax(data.linesToRender().map { it.coordinatesArea })
     }
 
     private fun drawLegend(c: Canvas) {
@@ -108,34 +112,50 @@ class ChartRenderer(
                 getMinX() to getMaxX(),
                 Area.CHART_X_LEGEND
             )
-            c.drawText(dateFormatter.format(value), x, y, legendPaint)
+            c.drawText(
+                dateFormatter.format(value),
+                x,
+                y,
+                legendPaint.apply { color = LEGEND_COLOR.adjustAlpha(chartAnimator.alpha) }
+            )
         }
     }
 
     private fun drawYLegend(c: Canvas) {
-        val diff = (getMaxY() - getMinY()) / LEGEND_ITEMS
-
-        var value = getMaxY()
-        for (i in 1..LEGEND_ITEMS) {
-            value -= diff
-            val x = placementCalculator.calculateXPosition(
-                getMinX(),
-                getMinX() to getMaxX(),
+        val difVal = (getMaxY() - getMinY()) / (LEGEND_ITEMS - 1)
+        val difPx = Math.abs(
+            placementCalculator.calculateYPosition(
+                getMaxY(),
+                getMinY() to getMaxY(),
                 Area.CHART_Y_LEGEND
-            )
-            val y = placementCalculator.calculateYPosition(
-                value,
+            ) - placementCalculator.calculateYPosition(
+                getMinY(),
                 getMinY() to getMaxY(),
                 Area.CHART_Y_LEGEND
             )
-            c.drawText(value.toString(), x, y, legendPaint)
+        ) / (LEGEND_ITEMS - 1)
+
+        var valuePx = placementCalculator.chartYLegendRect.bottom.toFloat()
+        val x = placementCalculator.calculateXPosition(
+            getMinX(),
+            getMinX() to getMaxX(),
+            Area.CHART_Y_LEGEND
+        )
+
+        var value = getMinY()
+        for (i in 1..LEGEND_ITEMS) {
+            val yAnimated =
+                valuePx + (placementCalculator.chartYLegendRect.bottom - valuePx) * (1 - chartAnimator.multiplierY)
+            c.drawText(value.toString(), x, yAnimated, legendPaint)
             c.drawLine(
                 x,
-                y + LEGEND_Y_LINE_MARGIN.px.toLong(),
-                x + placementCalculator.chartAreaRect.width(),
-                y + LEGEND_Y_LINE_MARGIN.px.toLong(),
-                legendPaint
+                yAnimated + LEGEND_Y_LINE_MARGIN.px.toLong(),
+                x + placementCalculator.chartYLegendRect.width(),
+                yAnimated + LEGEND_Y_LINE_MARGIN.px.toLong(),
+                legendPaint.apply { color = LEGEND_COLOR.adjustAlpha(chartAnimator.alpha) }
             )
+            valuePx -= difPx
+            value += difVal
         }
     }
 

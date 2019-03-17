@@ -47,6 +47,8 @@ class ChartView @JvmOverloads constructor(
             (w / 3 * 2).toFloat(),
             placementCalculator.navAreaRect.top.toFloat(),
             placementCalculator.navAreaRect.bottom.toFloat(),
+            placementCalculator.navAreaRect.right.toFloat(),
+            placementCalculator.navAreaRect.left.toFloat(),
             placementCalculator.navAreaRect.width().toFloat()
         )
     }
@@ -69,11 +71,6 @@ class ChartView @JvmOverloads constructor(
         doRedraw()
     }
 
-    private fun doRedraw() {
-        renderer.dataChanged(data, buttons)
-        chartAnimator.animate()
-    }
-
     fun onButtonClicked(button: Button) {
         val changedButton = buttons.first { it == button }
         changedButton.checked = !changedButton.checked
@@ -85,5 +82,11 @@ class ChartView @JvmOverloads constructor(
     fun onNavigationChanged(left: Float, right: Float) {
         renderer.navigationChanged(navControl.apply { this.left = left; this.right = right })
         postInvalidate()
+    }
+
+    private fun doRedraw() {
+        renderer.dataChanged(data, buttons)
+        renderer.navigationChanged(navControl)
+        chartAnimator.animate()
     }
 }

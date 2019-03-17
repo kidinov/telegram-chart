@@ -5,7 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.view.animation.AccelerateInterpolator
 
-const val ANIMATION_DURATION = 150L
+const val ANIMATION_DURATION = 180L
 
 class ChatAnimator(updateListener: ValueAnimator.AnimatorUpdateListener) {
     var multiplierY = 1f

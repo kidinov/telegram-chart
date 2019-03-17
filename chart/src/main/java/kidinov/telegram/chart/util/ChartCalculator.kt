@@ -3,7 +3,7 @@ package kidinov.telegram.chart.util
 import kidinov.telegram.chart.model.Line
 import kidinov.telegram.chart.model.NavigationControl
 
-class ChartCalculator {
+class ChartCalculator(private val placementCalculator: PlacementCalculator) {
     fun calcXMinMax(coordinates: List<Map<Long, Long>>): Pair<Long, Long> {
         if (coordinates.isEmpty()) return 0L to 0L
 
@@ -33,8 +33,17 @@ class ChartCalculator {
     }
 
     fun setRangeToShow(line: Line, navControl: NavigationControl) {
-        val leftProp = navControl.left / navControl.width
-        val rightProp = navControl.right / navControl.width
-    }
+        var propLeft = navControl.left / navControl.viewRight
+        var propRight = navControl.right / navControl.viewRight
 
+        if (propLeft < 0F) propLeft = 0F
+        if (propRight > 1F) propRight = 1F
+
+        line.coordinatesArea.clear()
+
+        line.coordinatesArea = line.coordinates.toList().subList(
+            (propLeft * line.coordinates.size).toInt(),
+            (propRight * line.coordinates.size).toInt()
+        ).toMap().toSortedMap()
+    }
 }

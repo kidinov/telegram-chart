@@ -7,5 +7,7 @@ data class Line(
     val name: String,
     val color: Int,
     var toRender: Boolean = true,
-    var range: IntRange = IntRange(0, coordinates.size)
+
+    // canvas coordinates
+    var coordinatesArea: SortedMap<Long, Long> = coordinates.toSortedMap()
 )

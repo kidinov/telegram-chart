@@ -103,7 +103,7 @@ class NavigationRenderer(
             )
         }
 
-        navLinesPaint.apply { strokeWidth = 4.px.toFloat() }
+        navLinesPaint.apply { strokeWidth = 6.px.toFloat() }
         c.drawLine(left, navAreaRect.bottom.toFloat(), left, navAreaRect.top.toFloat(), navLinesPaint)
         c.drawLine(right, navAreaRect.bottom.toFloat(), right, navAreaRect.top.toFloat(), navLinesPaint)
         navLinesPaint.apply { strokeWidth = 2.px.toFloat() }

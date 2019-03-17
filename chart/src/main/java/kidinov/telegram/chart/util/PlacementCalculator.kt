@@ -6,7 +6,7 @@ const val LINES_AREA_HEIGHT = 64
 const val NAVIGATION_AREA_HEIGHT = 64
 const val BORDER_MARGIN = 8
 const val BETWEEN_MARGIN = 16
-const val LEGEND_MARGIN = 16
+const val LEGEND_MARGIN = 20
 
 enum class Side {
     LEFT, TOP
@@ -27,7 +27,7 @@ class PlacementCalculator(
             width - BORDER_MARGIN.px,
             chartBottom - LEGEND_MARGIN.px
         )
-    private val chartYLegendRect: Rect
+    val chartYLegendRect: Rect
         get() = Rect(
             chartAreaRect.left + BORDER_MARGIN.px,
             chartAreaRect.top + LEGEND_MARGIN.px,
