@@ -1,48 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <kidinov.telegram.chart.ChartView
         android:id="@+id/cvChart"
         android:layout_width="match_parent"
         android:layout_height="600dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:background="#666" />
 
     <LinearLayout
-        android:id="@+id/glButtons"
+        android:id="@+id/llButtons"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_height="64dp"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvChart"
-        tools:background="#777"
-        tools:layout_height="64dp" />
+        tools:background="#777" />
 
-    <FrameLayout
-        android:id="@+id/pbProgress"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="#99555555"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ProgressBar
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center" />
-
-    </FrameLayout>
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

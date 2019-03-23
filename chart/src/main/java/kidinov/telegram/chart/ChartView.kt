@@ -63,7 +63,6 @@ class ChartView @JvmOverloads constructor(
         renderer.draw(canvas)
     }
 
-
     fun setChartData(data: Chart) {
         this.buttons = buttonsCalculator.calculateButtons(data)
         this.data = data

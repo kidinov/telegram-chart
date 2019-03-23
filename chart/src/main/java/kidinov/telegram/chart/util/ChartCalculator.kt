@@ -3,7 +3,7 @@ package kidinov.telegram.chart.util
 import kidinov.telegram.chart.model.Line
 import kidinov.telegram.chart.model.NavigationControl
 
-class ChartCalculator(private val placementCalculator: PlacementCalculator) {
+class ChartCalculator {
     fun calcXMinMax(coordinates: List<Map<Long, Long>>): Pair<Long, Long> {
         if (coordinates.isEmpty()) return 0L to 0L
 
@@ -45,39 +45,40 @@ class ChartCalculator(private val placementCalculator: PlacementCalculator) {
         val rightIndex = propRight * line.coordinates.size
 
         val listOfCoordinates = line.coordinates.toList()
-        val subList = listOfCoordinates.subList(leftIndex.toInt(), rightIndex.toInt()).toMutableList()
 
-        val leftBorder = if (leftIndex - 1 <= 0) subList[0] else calcBorder(leftIndex, listOfCoordinates)
-        val rightBorder = if (rightIndex + 1 >= listOfCoordinates.size) subList[subList.lastIndex] else
-            calcBorder(rightIndex, listOfCoordinates)
+        val subList =
+            listOfCoordinates.subList(leftIndex.toInt(), rightIndex.toInt()).toMutableList()
+
+        val leftBorder = if (subList.size >= 2)
+            calcBorder(leftIndex - leftIndex.toInt(), 0, subList) else
+            subList[0]
+
+        val rightBorder = if (subList.size >= 2)
+            calcBorder(rightIndex - rightIndex.toInt(), subList.lastIndex - 1, subList)
+        else subList[subList.lastIndex]
 
         subList[0] = leftBorder
         subList[subList.lastIndex] = rightBorder
-
-        println("==============================")
-        println("leftIndex = $leftIndex, rightIndex - $rightIndex")
-        println("leftBorder = $leftBorder, rightBorder - $rightBorder")
-        println("subList = ${subList.joinToString(", ")}")
-        println("==============================")
 
         line.coordinatesArea = subList.toMap().toSortedMap()
     }
 
     private fun calcBorder(
-        border: Float,
-        listOfCoordinates: List<Pair<Long, Long>>
+        prop: Float,
+        index: Int,
+        subList: List<Pair<Long, Long>>
     ): Pair<Long, Long> {
-        val x1 = listOfCoordinates[border.toInt()].first
-        val y1 = listOfCoordinates[border.toInt()].second
-        val x2 = listOfCoordinates[border.toInt() + 1].first
-        val y2 = listOfCoordinates[border.toInt() + 1].second
-        val prop = border - border.toInt()
-        val x = (x1 + (x2 - x1).toFloat() * prop)
+        val x1 = subList[index].first
+        val y1 = subList[index].second
+        val x2 = subList[index + 1].first
+        val y2 = subList[index + 1].second
+
+        val x = (x1 + (x2 - x1).toFloat() * prop).toLong()
         val y = calcYFromOnLine(x1, y1, x2, y2, x)
-        return x.toLong() to y
+        return x to y
     }
 
-    private fun calcYFromOnLine(x1: Long, y1: Long, x2: Long, y2: Long, x: Float): Long {
+    private fun calcYFromOnLine(x1: Long, y1: Long, x2: Long, y2: Long, x: Long): Long {
         if (x2 == x1) return (y2 - y1) / 2
         return (y1 + ((y2 - y1)) * (x - x1) / (x2 - x1).toFloat()).toLong()
     }

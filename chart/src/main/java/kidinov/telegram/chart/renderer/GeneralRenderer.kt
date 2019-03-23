@@ -14,7 +14,7 @@ class GeneralRenderer(
     placementCalculator: PlacementCalculator,
     chartAnimator: ChatAnimator
 ) {
-    private val chartCalculator = ChartCalculator(placementCalculator)
+    private val chartCalculator = ChartCalculator()
     private val buttonsRenderer = ButtonsRenderer()
     private val navigationRenderer =
         NavigationRenderer(placementCalculator, chartCalculator, chartAnimator)

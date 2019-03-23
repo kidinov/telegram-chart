@@ -86,7 +86,7 @@ class ChartRenderer(
     fun windowChanged(navControl: NavigationControl) {
         if (!::data.isInitialized) return
 
-        data.lines.forEach { chartCalculator.setRangeToShow(it, navControl) }
+        data.linesToRender().forEach { chartCalculator.setRangeToShow(it, navControl) }
         minMaxX = chartCalculator.calcXMinMax(data.linesToRender().map { it.coordinatesArea })
         minMaxY = chartCalculator.calcYMinMax(data.linesToRender().map { it.coordinatesArea })
     }

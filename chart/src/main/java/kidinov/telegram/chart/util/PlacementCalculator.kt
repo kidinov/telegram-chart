@@ -24,7 +24,7 @@ class PlacementCalculator(
         get() = Rect(
             0,
             BORDER_MARGIN.px,
-            width - BORDER_MARGIN.px,
+            width,
             chartBottom - LEGEND_MARGIN.px
         )
     val chartYLegendRect: Rect

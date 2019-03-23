@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import kidinov.telegram.chart.ChartView
 
-const val NAB_BORDER_THRESHOLD = 6
+const val NAB_BORDER_THRESHOLD = 8
 
 class TouchHandler(
     private val view: ChartView
